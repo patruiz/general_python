@@ -90,6 +90,6 @@ def save_csv(df, file_dir, file_name, suffix):
     Returns:
     - None: The function saves the file and does not return any value.
     """
-    save_name = f"{file_name}{suffix}.csv"
+    save_name = f"{file_name[:-4]}{suffix}.csv"
     save_path = os.path.join(file_dir, save_name)
     df.to_csv(save_path)
