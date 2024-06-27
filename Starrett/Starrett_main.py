@@ -1,13 +1,20 @@
 import os 
-from Starrett.Starrett_functions import load_csv, extract_data, find_fails
+from Starrett_functions import *
 
 def main():
-    file_dir = r"C:\Users\pr19556\OneDrive - Applied Medical\Documents\Investigations\02 - MD Jaw Gap\1525034 - Starrett Data"
+    os.system('clear')
+    
+    file_dir = r"/Users/patrickruiz/Desktop/general_python/Starrett/Data"
     file_name = "1525034_InsideGap.csv"
     
-    df = load_csv(file_dir, file_name)
-    df = extract_data(df)
-    df = find_fails(df)
+    df_load = load_csv(file_dir, file_name)
+    df_data = extract_data(df_load)
+    save_csv(df_data, file_dir, file_name, '_all')
+    df_fails = find_fails(df_data)
+    save_csv(df_fails, file_dir, file_name, '_fails')
+
+    # perform_correlation_analysis(df_data)
 
 if __name__ == '__main__':
     main()
+    

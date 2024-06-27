@@ -1,7 +1,7 @@
 import os
 from pdf2image import convert_from_path
 
-def convert_pdfs_to_images(pdf_directory):
+def pdf_to_image(pdf_directory):
     """
     Convert all PDF files in a specified directory to JPEG images.
 
