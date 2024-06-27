@@ -58,6 +58,17 @@ def find_fails(df):
     # Create a boolean mask for failures
     fail_mask = (df[locations] < lower_bound) | (df[locations] > upper_bound)
     return df[fail_mask.any(axis=1)]
+    
+def filter_outside(inside_data, outside_data):
+    inside_df = pd.read_csv(inside_data)
+    outside_df = pd.read_csv(outside_data)
+    
+    inside_fails = find_fails(inside_df)
+    print(inside_fails)
+    
+    
+    
+    
 
 def perform_correlation_analysis(df1, df2):
     """
@@ -96,6 +107,9 @@ def perform_correlation_analysis(df1, df2):
 
     return correlation_matrix
 
+
+    
+    
 
 def save_csv(df, file_dir, file_name, suffix):
     """
