@@ -62,10 +62,17 @@ def find_fails(df):
 def filter_outside(inside_data, outside_data):
     inside_df = pd.read_csv(inside_data)
     outside_df = pd.read_csv(outside_data)
-    
+
+
     inside_fails = find_fails(inside_df)
-    print(inside_fails)
-    
+    print(list(inside_fails.index))
+    inside_passes_index = [val for val in range(len(inside_df)) if val not in inside_fails.index]
+    print(inside_passes_index[1::])
+    # print(inside_fails.index)
+
+    # print(outside_df)
+    print(F"\nLen of Inside Passes: {len(inside_passes_index)}")
+    print(f"Len of Outside DF: {len(outside_df)}")
     
     
     
