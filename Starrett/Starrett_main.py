@@ -4,8 +4,8 @@ from Starrett_functions import *
 def main():
     os.system('clear')
     
-    file_dir = r"/Users/patrickruiz/Desktop/general_python/Starrett/Data"
-    file_name = "1524590_Outside.csv"
+    file_dir = r"C:\Users\pr19556\OneDrive - Applied Medical\Documents\Investigations\02 - MD Jaw Gap\Starrett Data\1525034\Inside"
+    file_name = "1525034_Inside.csv"
     
     df_load = load_csv(file_dir, file_name)
     df_data = extract_data(df_load)
