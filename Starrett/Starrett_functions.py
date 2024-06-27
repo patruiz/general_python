@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -58,24 +59,43 @@ def find_fails(df):
     fail_mask = (df[locations] < lower_bound) | (df[locations] > upper_bound)
     return df[fail_mask.any(axis=1)]
 
-def perform_correlation_analysis(data_frame):
+def perform_correlation_analysis(df1, df2):
     """
-    Calculates and visualizes the correlation matrix for the DataFrame.
+    Calculates and visualizes the correlation matrix between two DataFrames,
+    where the columns of the first DataFrame represent the x-axis and the 
+    columns of the second DataFrame represent the y-axis.
 
     Parameters:
-    - data_frame (pd.DataFrame): DataFrame where each column is a variable and each row is an observation.
+    - df1 (pd.DataFrame): First DataFrame where each column is a variable for the x-axis.
+    - df2 (pd.DataFrame): Second DataFrame where each column is a variable for the y-axis.
 
     Returns:
-    - pd.DataFrame: The computed correlation matrix.
+    - pd.DataFrame: The computed correlation matrix between the two DataFrames.
     """
-    correlation_matrix = data_frame.corr()  # Calculate correlation matrix
-    print("Correlation Matrix:")
+    # Ensure the DataFrames have the same number of rows
+    if df1.shape[0] != df2.shape[0]:
+        raise ValueError("Both DataFrames must have the same number of rows.")
+    
+    # Add prefixes to column names
+    df1 = df1.add_prefix('Inside_')
+    df2 = df2.add_prefix('Outside_')
+    
+    # Calculate correlation matrix between df1 columns and df2 columns
+    combined_df = pd.concat([df1, df2], axis=1)
+    correlation_matrix = combined_df.corr().loc[df1.columns, df2.columns]
+
+    # Print correlation matrix
+    print("Correlation Matrix between DataFrame 1 and DataFrame 2:")
     print(correlation_matrix)
-    plt.figure(figsize=(8, 6))
+
+    # Plot correlation matrix
+    plt.figure(figsize=(10, 8))
     sns.heatmap(correlation_matrix, annot=True, cmap='cool', fmt=".2f", linewidths=.5)
-    plt.title('Jaw Gap Correlation Graph')
+    plt.title('Correlation Matrix between DataFrame 1 and DataFrame 2')
     plt.show()
+
     return correlation_matrix
+
 
 def save_csv(df, file_dir, file_name, suffix):
     """
