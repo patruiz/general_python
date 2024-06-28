@@ -59,24 +59,22 @@ def find_fails(df):
     fail_mask = (df[locations] < lower_bound) | (df[locations] > upper_bound)
     return df[fail_mask.any(axis=1)]
     
-def filter_outside(inside_data, outside_data):
-    inside_df = pd.read_csv(inside_data)
-    outside_df = pd.read_csv(outside_data)
+# def filter_outside(inside_data, outside_data):
+#     inside_df = pd.read_csv(inside_data)
+#     outside_df = pd.read_csv(outside_data)
 
 
-    inside_fails = find_fails(inside_df)
-    print(list(inside_fails.index))
-    inside_passes_index = [val for val in range(len(inside_df)) if val not in inside_fails.index]
-    print(inside_passes_index[1::])
-    # print(inside_fails.index)
+#     inside_fails = find_fails(inside_df)
+#     print(list(inside_fails.index))
+#     inside_passes_index = [val for val in range(len(inside_df)) if val not in inside_fails.index]
+#     print(inside_passes_index[1::])
+#     # print(inside_fails.index)
 
-    # print(outside_df)
-    print(F"\nLen of Inside Passes: {len(inside_passes_index)}")
-    print(f"Len of Outside DF: {len(outside_df)}")
+#     # print(outside_df)
+#     print(F"\nLen of Inside Passes: {len(inside_passes_index)}")
+#     print(f"Len of Outside DF: {len(outside_df)}")
     
     
-    
-
 def perform_correlation_analysis(df1, df2):
     """
     Calculates and visualizes the correlation matrix between two DataFrames,
@@ -109,14 +107,10 @@ def perform_correlation_analysis(df1, df2):
     # Plot correlation matrix
     plt.figure(figsize=(10, 8))
     sns.heatmap(correlation_matrix, annot=True, cmap='cool', fmt=".2f", linewidths=.5)
-    plt.title('Correlation Matrix between DataFrame 1 and DataFrame 2')
+    plt.title('Shop Order 1524590')
     plt.show()
 
     return correlation_matrix
-
-
-    
-    
 
 def save_csv(df, file_dir, file_name, suffix):
     """
