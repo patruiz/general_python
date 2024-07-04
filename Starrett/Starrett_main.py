@@ -5,8 +5,8 @@ from Starrett_functions import *
 def main():
     os.system('cls')
     
-    file_dir = r"C:\Users\pr19556\OneDrive - Applied Medical\Documents\Investigations\02 - MD Jaw Gap\Starrett Data\UJC Proto\Inside"
-    file_name = "UJCProto_Inside.csv"
+    file_dir = r"C:\Users\pr19556\OneDrive - Applied Medical\Documents\Investigations\02 - MD Jaw Gap\Starrett Data\Device Variance\Raw"
+    file_name = "Maryland-Inside - MIS - Copy.CSV"
     
     df_load = load_csv(file_dir, file_name)
     df_data = extract_data(df_load)
@@ -29,7 +29,7 @@ def correlation():
     
     
 if __name__ == '__main__':
-    # main()
-    correlation()
+    main()
+    # correlation()
     # test()
     
