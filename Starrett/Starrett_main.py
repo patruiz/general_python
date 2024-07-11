@@ -22,9 +22,10 @@ def main():
 
 def correlation():
     cols_to_read = ['Rear', 'Base', 'Mid', 'Tip']
-    inside_df = pd.read_csv(r"C:\Users\pr19556\OneDrive - Appl1525034_JawGap_Inside.csvied Medical\Documents\Investigations\02 - MD Jaw Gap\Starrett Data\1524590\Inside\1524590_Inside_PR.csv", usecols=cols_to_read)
-    outside_df = pd.read_csv(r"C:\Users\pr19556\OneDrive - Applied Medical\Documents\Investigations\02 - MD Jaw Gap\Starrett Data\1524590\Outside\1524590_Outside_PR.csv", usecols=cols_to_read)
-    perform_correlation_analysis(inside_df, outside_df)
+    shop_order = 1525034
+    inside_df = pd.read_csv(r"C:\Users\pr19556\OneDrive - Applied Medical\Documents\Investigations\02 - MD Jaw Gap\Starrett Data\1525034\Data\Processed\1525034_JawGap_Inside_PR.csv", usecols=cols_to_read)
+    outside_df = pd.read_csv(r"C:\Users\pr19556\OneDrive - Applied Medical\Documents\Investigations\02 - MD Jaw Gap\Starrett Data\1525034\Data\Processed\1525034_JawGap_Outside_PR.csv", usecols=cols_to_read)
+    perform_correlation_analysis(shop_order, inside_df, outside_df)
     
 # def test():
 #     inside_path = r"C:\Users\pr19556\OneDrive - Applied Medical\Documents\Investigations\02 - MD Jaw Gap\Starrett Data\1525034\Inside\1525034_Inside_PR.csv"
@@ -33,7 +34,7 @@ def correlation():
     
     
 if __name__ == '__main__':
-    main()
-    # correlation()
+    # main()
+    correlation()
     # test()
     

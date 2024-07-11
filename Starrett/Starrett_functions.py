@@ -75,7 +75,7 @@ def find_fails(df):
 #     print(f"Len of Outside DF: {len(outside_df)}")
     
     
-def perform_correlation_analysis(df1, df2):
+def perform_correlation_analysis(shoporder, df1, df2):
     """
     Calculates and visualizes the correlation matrix between two DataFrames,
     where the columns of the first DataFrame represent the x-axis and the 
@@ -107,7 +107,7 @@ def perform_correlation_analysis(df1, df2):
     # Plot correlation matrix
     plt.figure(figsize=(10, 8))
     sns.heatmap(correlation_matrix, annot=True, cmap='cool', fmt=".2f", linewidths=.5)
-    plt.title('Shop Order 1524590')
+    plt.title(f"Shop Order {str(shoporder)}")
     plt.show()
 
     return correlation_matrix
