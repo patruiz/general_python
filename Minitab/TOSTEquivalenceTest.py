@@ -68,15 +68,15 @@ class TOSTEquivalenceTest:
         self.calculate_p_values()
 
         # Print the results
-        print(f"Test Mean: {round(self.mean_test, 3)}")
-        print(f"Reference Mean: {round(self.mean_ref, 3)}")
-        print(f"Mean Difference: {round(self.mean_diff, 3)}")
-        print(f"Standard Error of the Difference: {round(self.se_diff, 3)}")
-        print(f"Degrees of Freedom: {int(self.df)}")
-        print(f"Lower Bound T-value: {round(self.t_lower, 3)}")
-        print(f"Upper Bound T-value: {round(self.t_upper, 3)}")
-        print(f"Lower Bound P-value: {self.p_lower}")
-        print(f"Upper Bound P-value: {self.p_upper}")
+        print(f"Test Mean: {round(self.mean_test, 3)}", flush = True)
+        print(f"Reference Mean: {round(self.mean_ref, 3)}", flush = True)
+        print(f"Mean Difference: {round(self.mean_diff, 3)}", flush = True)
+        print(f"Standard Error of the Difference: {round(self.se_diff, 3)}", flush = True)
+        print(f"Degrees of Freedom: {int(self.df)}", flush = True)
+        print(f"Lower Bound T-value: {round(self.t_lower, 3)}", flush = True)
+        print(f"Upper Bound T-value: {round(self.t_upper, 3)}", flush = True)
+        print(f"Lower Bound P-value: {self.p_lower}", flush = True)
+        print(f"Upper Bound P-value: {self.p_upper}", flush = True)
 
         # Check if both p-values are less than alpha for equivalence (Minitab-like TOST)
         if self.p_lower < self.alpha and self.p_upper < self.alpha:
