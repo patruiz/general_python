@@ -12,52 +12,75 @@ class shop_db:
 
     def create_tables(self):
         
+        # Items Table
         self.curr.execute(
             """
             CREATE TABLE IF NOT EXISTS Items(
-            Name TEXT PRIMARY KEY NOT NULL
+            Item_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Item_Name TEXT UNIQUE NOT NULL
             )
             """
         )
 
+        # Filament Table
         self.curr.execute(
             """
             CREATE TABLE IF NOT EXISTS Filament(
-            ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            Color TEXT NOT NULL,
-            Type TEXT NOT NULL,
-            Brand TEXT NOT NULL,
-            UNIQUE (Color, Type, Brand),
-            FOREIGN KEY (Item) REFERENCES Items(Name)
+            Filament_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Filament_Color TEXT NOT NULL,
+            Filament_Type TEXT NOT NULL,
+            Filament_Brand TEXT NOT NULL,
+            UNIQUE (Filament_Color, Filament_Type, Filament_Brand)
             )
             """
         )
 
+        # Components Table
         self.curr.execute(
             """
-            CREATE TABLE IF NOT EXISTS Components(
-            ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            DESCRIPTION TEXT NOT NULL,
-            Item TEXT NOT NULL,
+            CREATE TABLE IF NOT EXISTS Parts(
+            Part_ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            Part_Description TEXT NOT NULL,
             Filament INTEGER NOT NULL,
-            FOREIGN KEY (Item) REFERENCES Items(Name),
-            FOREIGN KEY (Filament) REFERENCES Filament(ID)
+            FOREIGN KEY (Filament) REFERENCES Filament(Filament_ID)
+            )
+            """
+        )
+        
+        # BOM Table
+        self.curr.execute(
+            """
+            CREATE TABLE IF NOT EXISTS BOM(
+            Item_ID INTEGER NOT NULL,
+            Part_ID INTEGER NOT NULL, 
+            Qty INTEGER NOT NULL,
+            PRIMARY KEY (Item_ID, Part_ID),
+            FOREIGN KEY (Item_ID) REFERENCES Items(Item_ID)
+            FOREIGN KEY (Part_ID) REFERENCES Parts(Part_ID)
             )
             """
         )
 
     def load_data(self):
-        path = os.path.join(os.getcwd(), 'Inventory', 'Data', 'Items.csv')
-        print(path)
-        df = pd.read_csv(path)
-        for index, val in df.iterrows():
-            self.curr.execute(
-                """INSERT INTO Items VALUES (?)""", (val)
-            )
+        data_files = ['Item_Data.csv', 'Filament_Data.csv']
+        
+        for file in data_files:
+            if file == 'Item_Data.csv':
+                path = os.path.join(os.getcwd(), 'Inventory', 'Data', file)
+                df = pd.read_csv(path)
+                for index, val in df.iterrows():
+                    self.curr.execute("""INSERT INTO Items (Item_Name) VALUES (?)""", (val.iloc[0], ))
+                    
+            elif file == 'Filament_Data.csv':
+                path = os.path.join(os.getcwd(), 'Inventory', 'Data', file)
+                df = pd.read_csv(path)
+                print(df)
+                # for index, val in df.iterrows():
+                    # print
+                
+                
         self.database.commit()
 
-        
-    
     def enter_values(self, color, type, brand, item):
         self.curr.execute(
             """INSERT INTO Filament (color, type, brand, item) VALUES (?, ?, ?, ?)""", (color, type, brand, item)
