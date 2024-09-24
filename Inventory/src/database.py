@@ -3,7 +3,7 @@ import sqlite3
 import keyboard
 import pandas as pd 
 
-class shop_db:
+class Database:
     def __init__(self, db_path):
         self.db_path = db_path 
         self.database = None
@@ -19,8 +19,13 @@ class shop_db:
             # print('Press Enter to Continue . . .')
             # keyboard.wait('enter')
             # print("")
-        except:
-            print('\nConnection Failed . . .')
+        except sqlite3.IntegrityError as e:
+            # print(f'Item {val.iloc[0]} already exists in the database.')
+            pass
+
+    def database_disconnect(self):
+        if self.database and self.curr != None:
+            self.curr.close()
 
     def create_tables(self):
         if self.database and self.curr != None:
@@ -74,7 +79,20 @@ class shop_db:
                 FOREIGN KEY (Part_ID) REFERENCES Parts(Part_ID)
                 )
                 """
-        )
+            )
+            
+            # Inventory Table
+            self.curr.execute(
+                """ 
+                CREATE TABLE IF NOT EXISTS Inventory (
+                Part_ID INTEGER PRIMARY KEY,
+                Qty INTEGER DEFAULT 0, 
+                FOREIGN KEY (Part_ID) REFERENCES Parts (Part_ID)
+                )
+                """
+            )
+
+            
 
     def load_data(self):
         if self.database and self.curr != None:
@@ -133,7 +151,7 @@ class shop_db:
                         self.curr.execute("""SELECT Part_ID FROM Parts WHERE (Part_Type = ? AND Part_Variant = ? AND Filament_ID = ?)""", (val.loc['Part Type'], val.loc['Variant'], filament_id))
                         part_id = self.curr.fetchone()[0]
 
-                        print(f"Item ID: {item_id}, Filament ID: {filament_id}, Part ID: {part_id}")
+                        # print(f"Item ID: {item_id}, Filament ID: {filament_id}, Part ID: {part_id}")
 
                         try:
                             self.curr.execute("""INSERT INTO BOM (Item_ID, Part_ID, Qty) VALUES (?, ?, ?)""", (item_id, part_id, int(val.loc['Qty'])))
@@ -144,24 +162,6 @@ class shop_db:
 
             self.database.commit()
 
-
-
-
-
-
-    # def enter_values(self, color, type, brand, item):
-    #     self.curr.execute(
-    #         """INSERT INTO Filament (color, type, brand, item) VALUES (?, ?, ?, ?)""", (color, type, brand, item)
-    #     )
-
-    #     self.database.commit()
-
-
-os.system('cls')
-ass = shop_db(os.path.join(os.getcwd(), 'Inventory', 'data', 'swag.db'))
-ass.database_connect()
-ass.create_tables()
-ass.load_data()
 
 
 
