@@ -1,0 +1,35 @@
+Item/Part Renders Completed
+1. Pokeball
+2. Premier Ball
+3. 
+
+
+
+Progress
+- MEGA FUCKED UP
+    Cant just add parts in the part_data.csv as placeholders because they will mess up the count of the parts
+    Just get every single part and create them in every single color 
+    - How part numbering should go:
+        - check if part is in Database
+        - if part is not in database:
+            - create a different color in each part and add it to database
+        
+        *For each new item, if it has new parts:
+        - it should be added to the bottom of the item_data.csv 
+        - and new colors of that part will be added to the database
+        - do this for all new parts
+    
+    
+*PANTONE 
+
+Scarlet Red = 17-1464
+
+
+
+Tasks to Complete:
+
+- Add Reference from Part to Images in Database 
+- Write Image Viewer
+- Write Function to Reference Which Items Use Which Parts
+- Write a Function to Pull All Parts per Model
+- Write a Function to pull everything per Item 
