@@ -19,10 +19,17 @@ Progress
         - and new colors of that part will be added to the database
         - do this for all new parts
     
-    
-*PANTONE 
 
-Scarlet Red = 17-1464
+
+	Current Highest
+Top	F
+Ring	A
+Disk	A
+Cube	A
+Ring	A
+Button	A
+Bottom	B
+Decorator	L
 
 
 

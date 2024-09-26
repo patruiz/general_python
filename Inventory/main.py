@@ -7,12 +7,11 @@ def main():
     ass = Database(os.path.join(os.getcwd(), 'Inventory', 'data', 'swag.db'))
 
     ass.database_connect()
-    ass.create_tables()
-    ass.load_data()
+    # ass.create_tables()
+    # ass.load_data()
 
     inv = Inventory(ass)
     needtobuyswag = inv.get_parts((1, 3))
-    inv.check_inventory(needtobuyswag)
     # inv.get_parts((1, 3))
 
 
