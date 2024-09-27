@@ -3,15 +3,23 @@ from src.database import Database
 from src.inventory import Inventory
 
 def main():
-    os.system('cls')
+    # os.system('cls')
+    os.system('clear')
+
     ass = Database(os.path.join(os.getcwd(), 'Inventory', 'data', 'swag.db'))
 
     ass.database_connect()
-    # ass.create_tables()
+    ass.create_tables()
+    ass.load_filament_data()
+    ass.load_bom_data()
+    # ass.show_changelog()
+    
+    
+    
     # ass.load_data()
 
-    inv = Inventory(ass)
-    needtobuyswag = inv.get_parts((1, 3))
+    # inv = Inventory(ass)
+    # needtobuyswag = inv.get_parts((1, 3))
     # inv.get_parts((1, 3))
 
 

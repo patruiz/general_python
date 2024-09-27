@@ -20,16 +20,21 @@ Progress
         - do this for all new parts
     
 
-
-	Current Highest
-Top	F
-Ring	A
-Disk	A
-Cube	A
-Ring	A
-Button	A
-Bottom	B
-Decorator	L
+***INVENTORY NOTES AND SHIT***
+	Current Highest		Safari Ball		Pikachu Ball
+Upper Shell	P		Heal Ball		Squirtle Ball
+Locator Disk	B		Fast Ball		Bulbasour Ball
+Weighted Cube	A		Great Ball		Charmander Ball
+Central Ring	B		Cherish Ball		
+Central Button	B		Sport Ball		
+Lower Shell	H		Heavy Ball		
+Decorator	AD		Lure Ball		
+			Master Ball		
+			Ultra Ball		
+			Repeat Ball		
+			Hisui Ball		
+					
+					
 
 
 

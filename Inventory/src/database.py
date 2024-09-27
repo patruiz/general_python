@@ -1,46 +1,56 @@
-import os 
+import os
 import sqlite3
-import keyboard
-import pandas as pd 
+import pandas as pd
 
 class Database:
     def __init__(self, db_path):
-        self.db_path = db_path 
+        self.db_path = db_path
         self.database = None
         self.curr = None
+        self.change_log = []
 
     def database_connect(self):
-        os.system('cls')
-        # print(f'Connecting to {self.db_path} . . .')
         try:
             self.database = sqlite3.connect(self.db_path)
             self.curr = self.database.cursor()
-            # print('\nConnection Successful . . .')
-            # print('Press Enter to Continue . . .')
-            # keyboard.wait('enter')
-            # print("")
-        except sqlite3.IntegrityError as e:
-            # print(f'Item {val.iloc[0]} already exists in the database.')
+            
+        except sqlite3.IntegrityError:
             pass
 
     def database_disconnect(self):
-        if self.database and self.curr != None:
+        if self.database and self.curr:
             self.curr.close()
+            self.database = None
+            self.curr = None
+            
+    def show_changelog(self):
+        print(self.change_log)
 
     def create_tables(self):
-        if self.database and self.curr != None:
-    
+        if self.database and self.curr:
+            
+            # Groups Table
+            self.curr.execute(
+                """
+                CREATE TABLE IF NOT EXISTS Groups(
+                Group_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                Group_Name TEXT UNIQUE NOT NULL
+                )
+                """
+            )
+            
             # Items Table
             self.curr.execute(
                 """
                 CREATE TABLE IF NOT EXISTS Items(
                 Item_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                Item_Name TEXT UNIQUE NOT NULL
+                Item_Name TEXT UNIQUE NOT NULL,
+                Group_Name TEXT NOT NULL,
+                FOREIGN KEY (Group_Name) REFERENCES Groups(Group_Name)
                 )
                 """
             )
-
-            # Filament Table
+            # Create Filament Table
             self.curr.execute(
                 """
                 CREATE TABLE IF NOT EXISTS Filament(
@@ -52,14 +62,14 @@ class Database:
                 )
                 """
             )
-
-            # Part Table
+            
+            # Create Parts Table
             self.curr.execute(
                 """
                 CREATE TABLE IF NOT EXISTS Parts(
-                Part_ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                Part_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Part_Type TEXT NOT NULL,
-                Part_Variant TEXT(1) NOT NULL,
+                Part_Variant TEXT NOT NULL,
                 Filament_ID INTEGER NOT NULL,
                 UNIQUE (Part_Type, Part_Variant, Filament_ID),
                 FOREIGN KEY (Filament_ID) REFERENCES Filament(Filament_ID)
@@ -67,7 +77,7 @@ class Database:
                 """
             )
             
-            # BOM Table
+            # Create BOM Table
             self.curr.execute(
                 """
                 CREATE TABLE IF NOT EXISTS BOM(
@@ -75,93 +85,99 @@ class Database:
                 Part_ID INTEGER NOT NULL, 
                 Qty INTEGER NOT NULL,
                 PRIMARY KEY (Item_ID, Part_ID),
-                FOREIGN KEY (Item_ID) REFERENCES Items(Item_ID)
+                FOREIGN KEY (Item_ID) REFERENCES Items(Item_ID),
                 FOREIGN KEY (Part_ID) REFERENCES Parts(Part_ID)
                 )
                 """
             )
             
-            # Inventory Table
+            # Create Inventory Table
             self.curr.execute(
                 """ 
                 CREATE TABLE IF NOT EXISTS Inventory (
                 Part_ID INTEGER PRIMARY KEY,
                 Qty INTEGER DEFAULT 0, 
-                FOREIGN KEY (Part_ID) REFERENCES Parts (Part_ID)
+                FOREIGN KEY (Part_ID) REFERENCES Parts(Part_ID)
                 )
                 """
             )
 
-            
+    def _get_filament_id (self, color, fil_type, brand):
+        self.curr.execute("""SELECT Filament_ID FROM Filament WHERE Filament_Color = ? AND Filament_Type = ? AND Filament_Brand = ?""", (color, fil_type, brand))
+        return self.curr.fetchone()
 
-    def load_data(self):
-        if self.database and self.curr != None:
+    def _enter_filament_data(self, color, fil_type, brand):
+        self.curr.execute("""INSERT INTO Filament (Filament_Color, Filament_Type, Filament_Brand) VALUES (?, ?, ?)""", (color, fil_type, brand))
+        # try:
+        #     self.curr.execute("""INSERT INTO Filament (Filament_Color, Filament_Type, Filament_Brand) VALUES (?, ?, ?)""", (color, fil_type, brand))
+        # except sqlite3.IntegrityError:
+        #     print(f"Filament ({color}, {fil_type}, {brand}) already exists.")
+                    
+    def _get_part_id(self, part_type, variant, filament_id):
+        self.curr.execute("""SELECT Part_ID FROM Parts WHERE (Part_Type = ? AND Part_Variant = ? AND Filament_ID = ?)""", (part_type, variant, filament_id))
+        return self.curr.fetchone()
         
-            data_files = ['item_data.csv', 'filament_data.csv', 'part_data.csv', 'bom_data.csv']
+    def _enter_part_data(self, part_type, variant, filament_id):
+        self.curr.execute("""INSERT INTO Parts (Part_Type, Part_Variant, Filament_ID) VALUES (?, ?, ?)""", (part_type, variant, filament_id))
+    
+    def _get_item_id(self, item_name):
+        self.curr.execute("""SELECT Item_ID FROM Items WHERE Item_Name = ?""", (item_name, ))
+        return self.curr.fetchone()
+        
+    def _enter_item_data(self, item_name, item_group):
+        self.curr.execute("""INSERT INTO Items (Item_Name, Group_Name) VALUES (?, ?)""", (item_name, item_group))    
+    
+    def _find_part_item_relationship(self, item_id, part_id):
+        self.curr.execute("""SELECT * FROM BOM WHERE (Item_ID = ? AND Part_ID = ?)""", (item_id, part_id))
+        return self.curr.fetchone()
+    
+    def load_filament_data(self):
+        if self.database and self.curr:
+            data_path = os.path.join(os.getcwd(), 'Inventory', 'data', 'references', 'filament_data.csv')
+            df = pd.read_csv(data_path)
+            
+            for index, row in df.iterrows():
+                color = row.get('Color')
+                fil_type = row.get('Type')
+                brand = row.get('Brand')
 
-            # Item Data - Load
-            for file in data_files:
-                path = os.path.join(os.getcwd(), 'Inventory', 'data', 'references', file)
-                df = pd.read_csv(path)
+                fil_id = self._get_filament_id(color, fil_type, brand)
+                
+                if fil_id is None:
+                    self._enter_filament_data(color, fil_type, brand)
+                    print(f"Added Filament: {color}, {fil_type}, {brand}")
+                    
+            self.database.commit()    
+    
+    def load_bom_data(self):
+        if self.database and self.curr:
+            data_path = os.path.join(os.getcwd(), 'Inventory', 'data', 'references', 'master_bom.csv')
+            df = pd.read_csv(data_path)
+            
+            for index, row in df.iterrows():
+                group = row.loc['Group']
+                item_name = row.loc['Item']
+                part_type = row.loc['Part Type']
+                variant = row.loc['Variant']
+                color = row.loc['Filament Color']
+                fil_type = row.loc['Filament Type']
+                fil_brand = row.loc['Filament Brand']
+                qty = row.loc['Qty']
+                
+                item_id = self._get_item_id(item_name)
+                if item_id is None:
+                    self._enter_item_data(item_name, group)
+                    
+                
+                fil_id = self._get_filament_id(color, fil_type, fil_brand)
+                
+                if fil_id is not None:
+                    part_id = self._get_part_id(part_type, variant, fil_id[0]) 
+                    
+                    if part_id is None:
+                        self._enter_part_data(part_type, variant, fil_id[0])
+                        print(f"Added Part: {part_type}, {variant}, {fil_id[0]}")
+                else:
+                    print(f"Filament not found: {color}, {fil_type}, {fil_brand}")
 
-                if file == data_files[0]:
-                    for index, val in df.iterrows():
-                        item = val.loc['Item']
-                        try:
-                            self.curr.execute("""INSERT INTO Items (Item_Name) VALUES (?)""", (item, ))
-                        except sqlite3.IntegrityError as e:
-                            # print(f'Item {val.iloc[0]} already exists in the database.')
-                            pass
-
-                # Filament Data - Load                    
-                elif file == data_files[1]:
-                    for index, val in df.iterrows():
-                        color = val.loc['Color']
-                        fil_type = val.loc['Type']
-                        brand = val.loc['Brand']
-                        try:
-                            self.curr.execute("""INSERT INTO Filament (Filament_Color, Filament_Type, Filament_Brand) VALUES (?, ?, ?)""", (color, fil_type, brand))
-                        except sqlite3.IntegrityError as e:
-                            # print(f'Item {val.iloc[0]} already exists in the database.')
-                            pass
-
-                # Parts Data - Load                         
-                elif file == data_files[2]:
-                    self.curr.execute("""SELECT Filament_ID FROM Filament""")
-                    filament_list = [i[0] for i in self.curr.fetchall()]
-                    for index, val in df.iterrows():
-                        part_type, part_variant = val.loc['Part Type'], val.loc['Variant']
-                        for filament in filament_list:
-                            try:
-                                self.curr.execute("""INSERT INTO Parts (Part_Type, Part_Variant, Filament_ID) VALUES (?, ?, ?)""", (part_type, part_variant, filament))
-                            except sqlite3.IntegrityError as e:
-                                # print(f'Item {val.iloc[0]} already exists in the database.')
-                                pass
-                        
-                # BOM Data - Load
-                elif file == data_files[3]:
-                    for index, val in df.iterrows():
-                        # print(val)
-                        self.curr.execute("""SELECT Item_ID FROM Items WHERE Item_Name = ?""", (val.loc['Item'], ))
-                        item_id = self.curr.fetchone()[0]
-
-                        self.curr.execute("""SELECT Filament_ID FROM Filament WHERE (Filament_Color = ? AND Filament_Type = ? AND Filament_Brand = ?)""", (val.loc['Color'], val.loc['Filament Type'], val.loc['Filament Brand']) )
-                        filament_id = self.curr.fetchone()[0]
-
-                        self.curr.execute("""SELECT Part_ID FROM Parts WHERE (Part_Type = ? AND Part_Variant = ? AND Filament_ID = ?)""", (val.loc['Part Type'], val.loc['Variant'], filament_id))
-                        part_id = self.curr.fetchone()[0]
-
-                        # print(f"Item ID: {item_id}, Filament ID: {filament_id}, Part ID: {part_id}")
-
-                        try:
-                            self.curr.execute("""INSERT INTO BOM (Item_ID, Part_ID, Qty) VALUES (?, ?, ?)""", (item_id, part_id, int(val.loc['Qty'])))
-                        except sqlite3.IntegrityError as e:
-                            # print(f'Item {val.iloc[0]} already exists in the database.')
-                            pass
-
-
-            self.database.commit()
-
-
-
-
+        self.database.commit()
