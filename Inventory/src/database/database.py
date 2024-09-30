@@ -2,6 +2,7 @@ import os
 import sqlite3
 import pandas as pd
 
+
 class Database:
     def __init__(self, db_path):
         self.db_path = db_path
@@ -95,10 +96,11 @@ class Database:
                 """
             )
 
-            # # Inventory Table
+            # # # Inventory Table
             # self.curr.execute(
             #     """
             #     CREATE TABLE IF NOT EXISTS Inventory(
+                
                 
             #     )
             #     """
