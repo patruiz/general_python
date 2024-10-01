@@ -22,6 +22,9 @@ def main():
     # print(butthole)
 
     db_orders = DatabaseOrders(db_connection.cursor)
+    # db_orders.create_order(1, '01-Oct-24')
+    db_orders.add_item_to_order(1, 1, 3)
+    
 
 
 

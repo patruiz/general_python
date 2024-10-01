@@ -16,7 +16,7 @@ class DataLoader:
             return self.curr.lastrowid
         
     def ensure_group(self, group_name):
-        self.curr.execute("""SELECT Group_ID FROM Groups WHERE GROUP_NAME = ?""", (group_name, ))
+        self.curr.execute("""SELECT Group_ID FROM Groups WHERE Group_Name = ?""", (group_name, ))
         result = self.curr.fetchone()
         if result:
             return result[0]
