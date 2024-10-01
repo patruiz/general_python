@@ -1,43 +1,32 @@
 import os 
-# from src.database import DatabaseConnection, DatabaseSchema, DataLoader, DatabaseQueries
-
-from src.database import Database
-# from src.inventory import Inventory
+from src.database import DatabaseConnection, DatabaseSchema, DataLoader, DatabaseQueries, DatabaseOrders
 
 def main():
     os.system('cls')
-    # os.system('clear')
 
-    ass = Database(os.path.join(os.getcwd(), 'Inventory', 'data', 'swag.db'))
+    db_path = os.path.join(os.getcwd(), 'Inventory', 'data', 'swag.db')
+    db_connection = DatabaseConnection(db_path)
+    db_connection.connect()
 
-    ass.database_connect()
-    ass.create_tables()
+    db_schema = DatabaseSchema(db_connection.cursor)
+    db_schema.create_tables()
 
-    ass.load_filament_data()
-    ass.load_bom_data()
-    ass.load_item_images()
+    db_loader = DataLoader(db_connection.cursor, db_connection)
+    db_loader.load_filament_data()
+    db_loader.load_bom_data()
+    # db_loader.load_inventory_data()
+    db_loader.load_order_status_data()
 
-    ass.view_image("1")
+    db_queries = DatabaseQueries(db_connection.cursor)
+    # butthole = db_queries.get_parts_per_item(2)
+    # print(butthole)
 
-    # ass.show_changelog()
+    db_orders = DatabaseOrders(db_connection.cursor)
 
-# def main():
-#     os.system('cls')
 
-#     db_path = os.path.join(os.getcwd(), 'Inventory', 'data', 'swag.db')
-#     db_connection = DatabaseConnection(db_path)
-#     db_connection.connect()
 
-#     db_schema = DatabaseSchema(db_connection.cursor)
-#     db_schema.create_tables()
 
-#     db_loader = DataLoader(db_connection.cursor, db_connection)
-#     db_loader.load_filament_data()
-
-#     db_queries = DatabaseQueries(db_connection.cursor)
-#     db_queries._get_group_id('Swag')
-
-#     db_connection.disconnect()
+    db_connection.disconnect()
     
 
 if __name__ == "__main__":

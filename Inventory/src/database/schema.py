@@ -68,24 +68,27 @@ class DatabaseSchema:
                 """
             )
 
-            # # # Inventory Table
-            # self.curr.execute(
-            #     """
-            #     CREATE TABLE IF NOT EXISTS Inventory(
-                
-                
-            #     )
-            #     """
-            # )
+            # # Inventory Table
+            self.curr.execute(
+                """
+                CREATE TABLE IF NOT EXISTS Inventory(
+                Part_ID INTEGER PRIMARY KEY NOT NULL, 
+                Qty INTEGER NOT NULL,
+                FOREIGN KEY (Part_ID) REFERENCES Parts(Part_ID)
+                )
+                """
+            )
 
             # Orders Table
             self.curr.execute(
                 """
                 CREATE TABLE IF NOT EXISTS Orders(
                 Order_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                Order_Date DATE NOT NULL,
                 Customer_ID INTEGER NOT NULL, 
-                Total VARCHAR NOT NULL
+                Start_Date DATE NOT NULL,
+                End_Date DATE, 
+                Status TEXT NOT NULL,
+                FOREIGN KEY (Status) REFERENCES OrderStatus(Description)
                 )
                 """
             )
@@ -94,10 +97,10 @@ class DatabaseSchema:
             self.curr.execute(
                 """
                 CREATE TABLE IF NOT EXISTS OrderItems(
-                OrderItem_ID INTEGER PRIMARY KEY AUTOINCREMENT, 
                 Order_ID INTEGER NOT NULL, 
                 Item_ID INTEGER NOT NULL,
                 Qty INTEGER NOT NULL, 
+                PRIMARY KEY (Order_ID, Item_ID)
                 FOREIGN KEY (Item_ID) REFERENCES Items(Item_ID), 
                 FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID)
                 )
@@ -108,15 +111,22 @@ class DatabaseSchema:
             self.curr.execute(
                 """
                 CREATE TABLE IF NOT EXISTS OrderFinancials(
-                Order_ID INTEGER PRIMARY KEY NOT NULL, 
-
-
+                Order_ID INTEGER PRIMARY KEY NOT NULL,
+                Subtotal REAL, 
+                Discount REAL,
+                Tax REAL, 
+                Total REAL,
                 FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID)
-
                 )
-                
+                """
+            )
 
-
-
+            # Order Status Table
+            self.curr.execute(
+                """                    
+                CREATE TABLE IF NOT EXISTS OrderStatus(
+                Status_ID INTEGER PRIMARY KEY AUTOINCREMENT, 
+                Description TEXT NOT NULL UNIQUE
+                )
                 """
             )
