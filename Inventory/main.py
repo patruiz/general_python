@@ -1,5 +1,5 @@
 import os 
-from src.database import DatabaseConnection, DatabaseSchema, DataLoader, DatabaseQueries, DatabaseOrders
+from src.database import DatabaseConnection, DatabaseSchema, DataLoader, DatabaseQueries, DatabaseOrders, DatabaseInventory
 
 def main():
     os.system('cls')
@@ -23,8 +23,12 @@ def main():
 
     db_orders = DatabaseOrders(db_connection.cursor)
     # db_orders.create_order(1, '01-Oct-24')
-    db_orders.add_item_to_order(1, 1, 3)
-    
+    # db_orders.add_item_to_order(1, 1, 3)
+
+    # db_orders.update_order_status(1)
+    # db_orders.get_order_details(1)
+
+    db_inventory = DatabaseInventory(db_connection.cursor)
 
 
 
