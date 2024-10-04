@@ -14,6 +14,7 @@ class DatabaseOrders:
 
     def update_order_status(self, order_id, status = None):
         if status:
+            print(status)
             if not isinstance(status, int):
                 print(status)
                 self.curr.execute("""SELECT Status_ID FROM OrderStatus WHERE Description = ?""", (status, ))

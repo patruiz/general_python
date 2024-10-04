@@ -9,13 +9,13 @@ def main():
     db_connection.connect()
 
     db_schema = DatabaseSchema(db_connection.cursor)
-    db_schema.create_tables()
+    # db_schema.create_tables()
 
     db_loader = DataLoader(db_connection.cursor, db_connection)
-    db_loader.load_filament_data()
-    db_loader.load_bom_data()
+    # db_loader.load_filament_data()
+    # db_loader.load_bom_data()
     # db_loader.load_inventory_data()
-    db_loader.load_order_status_data()
+    # db_loader.load_order_status_data()
 
     db_queries = DatabaseQueries(db_connection.cursor)
     # butthole = db_queries.get_parts_per_item(2)
@@ -23,10 +23,10 @@ def main():
 
     db_orders = DatabaseOrders(db_connection.cursor)
     # db_orders.create_order(1, '01-Oct-24')
-    # db_orders.add_item_to_order(1, 1, 3)
+    # db_orders.add_item_to_order(1, 2, 1)
 
-    # db_orders.update_order_status(1)
-    # db_orders.get_order_details(1)
+    db_orders.update_order_status(1, 1)
+    db_orders.get_order_details(1)
 
     db_inventory = DatabaseInventory(db_connection.cursor)
 
