@@ -38,6 +38,5 @@ class DatabaseOrders:
         else:
             pass
 
-
     def calc_order_total(self):
         pass

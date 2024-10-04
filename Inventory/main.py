@@ -1,5 +1,5 @@
 import os 
-from src.database import DatabaseConnection, DatabaseSchema, DataLoader, DatabaseQueries, DatabaseOrders, DatabaseInventory
+from src.database import DatabaseConnection, DatabaseSchema, DataLoader, DatabaseQueries, DatabaseOrders, DatabaseInventory, DatabasePlanner
 
 def main():
     os.system('cls')
@@ -29,7 +29,8 @@ def main():
     db_orders.get_order_details(1)
 
     db_inventory = DatabaseInventory(db_connection.cursor)
-
+    db_inventory.add_part_to_inventory(1, 5)
+    db_inventory.remove_part_from_inventory(1, 1)
 
 
 
