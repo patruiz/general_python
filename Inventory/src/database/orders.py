@@ -11,22 +11,30 @@ class DatabaseOrders:
             self.curr.execute("""INSERT INTO OrderItems (Order_ID, Item_ID, Qty) VALUES (?, ?, ?)""", (order_id, item_id, quantity))
         except:
             raise ValueError 
-
+    
     def update_order_status(self, order_id, status = None):
         if status:
-            print(status)
             if not isinstance(status, int):
-                print(status)
-                self.curr.execute("""SELECT Status_ID FROM OrderStatus WHERE Description = ?""", (status, ))
-                status_id = self.curr.fetchone()[0]
+                self.curr.execute(
+                    """SELECT Status_ID FROM OrderStatus WHERE Description = ?""", (status,))
+                result = self.curr.fetchone()
+                if result:
+                    status_id = result[0]
+                else:
+                    raise ValueError(f"Invalid status: {status}")
             else:
                 status_id = status
         else:
-            self.curr.execute("""SELECT Status FROM Orders WHERE Order_ID = ?""", (order_id, ))
-            status_id = self.curr.fetchone()[0]
-            status_id = int(status_id) + 1
+            self.curr.execute("""SELECT Status FROM Orders WHERE Order_ID = ?""", (order_id,))
+            result = self.curr.fetchone()
+            if result:
+                status_id = int(result[0]) + 1
+            else:
+                raise ValueError(f"Order ID {order_id} not found.")
 
         self.curr.execute("""UPDATE Orders SET Status = ? WHERE Order_ID = ?""", (status_id, order_id))
+
+        self.curr.execute("""INSERT INTO OrderLog (Order_ID, Status_ID) VALUES = (?, ?)""", (order_id, status_id))
 
     def get_order_details(self, order_id):
         self.curr.execute("""SELECT * FROM Orders""")
@@ -38,5 +46,24 @@ class DatabaseOrders:
         else:
             pass
 
+    def get_order_details(self, order_id):
+        self.curr.execute("""SELECT Orders.Order_ID, Orders.Start_Date, Orders.Status, OrderItems.Item_ID, OrderItems.Qty FROM Orders LEFT JOIN OrderItems ON Orders.Order_ID = OrderItems.Order_ID WHERE Orders.Order_ID = ?""", (order_id,))
+        response = self.curr.fetchall()
+        if not response:
+            raise ValueError(f"Order ID {order_id} not found.")
+        
+        return [
+            {
+                "OrderID": row[0],
+                "StartDate": row[1],
+                "Status": row[2],
+                "ItemID": row[3],
+                "Qty": row[4]
+            } for row in response
+        ]
+
     def calc_order_total(self):
         pass
+
+
+    

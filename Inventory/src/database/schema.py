@@ -3,6 +3,7 @@ class DatabaseSchema:
         self.curr = cursor
 
     def create_tables(self):
+
         # Groups Table
         self.curr.execute(
             """
@@ -126,6 +127,30 @@ class DatabaseSchema:
             CREATE TABLE IF NOT EXISTS OrderStatus(
             Status_ID INTEGER PRIMARY KEY AUTOINCREMENT, 
             Description TEXT NOT NULL UNIQUE
+            )
+            """
+        )
+
+        # Customer Table
+        self.curr.execute(
+            """
+            CREATE TABLE IF NOT EXISTS Customer(
+            Customer_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Email VARCHAR UNIQUE NOT NULL
+            )
+            """
+        )
+
+        # Order Log Table
+        self.curr.execute(
+            """
+            CREATE TABLE IF NOT EXISTS OrderLog(
+            Log_ID INTEGER PRIMARYK KEY AUTOINCREMENT, 
+            Order_ID INTEGER NOT NULL, 
+            Status_ID INTEGER NOT NULL, 
+            Change_Date DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID), 
+            FOREIGN KEY (Status_ID) REFERENCES OrderStatus(Status_ID)
             )
             """
         )
